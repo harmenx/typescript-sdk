@@ -1118,8 +1118,8 @@ export class Client extends Protocol<ClientContext> {
                 this._setupListChangedHandlers(this._listChangedConfig);
             }
         } catch (error) {
-            // Disconnect if initialization fails.
-            void this.close();
+            // Finish closing before rejecting, so this transport's onclose cannot clear a retried connect().
+            await this.close().catch(() => {});
             throw error;
         }
     }
